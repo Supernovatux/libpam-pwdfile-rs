@@ -1,0 +1,21 @@
+[package]
+name = "pam_pwdfile_rs"
+version = "0.1.0"
+authors = ["Supernovatux <thulashitharan.d@gmail.com>"]
+
+[dependencies]
+pamsm = {version = "*" ,features = ["libpam"] }
+sha2 = "0.10.6"
+
+[lib]
+name = "pam_pwdfile_rs"
+crate-type = ["cdylib"]
+
+[profile.release]
+debug = false
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+overflow-checks = false
+strip = "symbols"

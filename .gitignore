@@ -1,0 +1,7 @@
+/target
+*.tar.gz
+*.tar.zst
+*.out*
+pkg
+completions
+.vscode/settings.json
