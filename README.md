@@ -12,7 +12,7 @@ This module is useful if you want to authenticate with a password different from
 
 ```bash
 cd /tmp
-wget https://github.com/Supernovatux/libpam-pwdfile-rs/releases/latest/download/PKGBUILD
+wget https://github.com/Supernovatux/libpam-pwdfile-rs/releases/download/0.1.0/PKGBUILD
 makepkg -si
 ```
 
