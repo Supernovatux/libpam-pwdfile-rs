@@ -1,10 +1,10 @@
 # libpam-pwdfile-rs
 
 ## Description
-This is a rust port of [libpam-pwdfile](https://git.tiwe.de/libpam-pwdfile.git). It is a PAM module that allows you to authenticate against a password file. Password are hashed with sha512sum
+This is a rust port of [libpam-pwdfile](https://git.tiwe.de/libpam-pwdfile.git). It is a PAM module that allows you to authenticate against a password file. Passwords should be hashed with sha512sum
 
 ## Use case
-This module is useful if you want to authenticate with a password different from the one you use to login to your system. For example, if you want to use a password for SDDM and sudo.
+This module is useful if you want to authenticate with a password different from the one you use to login to your system. For example, if you want to use different password for SDDM and sudo.
 
 ## Installation
 
