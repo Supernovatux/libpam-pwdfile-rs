@@ -70,7 +70,7 @@ checksum = "3304a64d199bb964be99741b7a14d26972741915b3649639149b2479bb46f4b5"
 
 [[package]]
 name = "pam_pwdfile_rs"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "pamsm",
  "sha2",

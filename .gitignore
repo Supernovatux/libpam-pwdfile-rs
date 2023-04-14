@@ -1,7 +1,8 @@
 /target
 *.tar.gz
 *.tar.zst
-*.out*
+*.out*aru.conf")
 pkg
 completions
 .vscode/settings.json
+package_tools
