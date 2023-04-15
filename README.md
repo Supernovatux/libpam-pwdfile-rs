@@ -4,8 +4,8 @@
 This is a rust port of [libpam-pwdfile](https://git.tiwe.de/libpam-pwdfile.git). It is a PAM module that allows you to authenticate against a password file. Passwords should be hashed with sha512sum
 
 ## Use case
-This module is useful if you want to authenticate with a password different from the one you use to login to your system. For example, if you want to use different password for SDDM and sudo.
-
+- This module is useful if you want to authenticate with a password different from the one you use to login to your system. For example, if you want to use different password for SDDM and sudo.
+- You can also use this module to provide multiple passwords for a single user. 
 ## Installation
 
 ### Arch Linux
@@ -31,7 +31,7 @@ To use custom passwords for specific users, create a file at `/etc/pwdfile` and 
 ```console
 $ echo -n "password_foo" | sha512sum
 ```
-This will output the hash in the format `<hash> -`, where `<hash>` is the generated password hash. Copy the hash and paste it in the `/etc/pwdfile` file in the format `foo:<hash>`. Repeat this process for each user and password combination you want to set. You may use this command to automate the above process `printf "password_foo" | sha512sum | awk '{print $1}' |  sed 's/.*/$ foo:&/' | sudo tee -a /etc/pwdfile`
+This will output the hash in the format `<hash> -`, where `<hash>` is the generated password hash. Copy the hash and paste it in the `/etc/pwdfile` file in the format `foo:<hash>`. Repeat this process for each user and password combination you want to set.You may provide multiple entries for a single user if you want a user to have multiple passwords.You may use this command to automate the above process `printf "password_foo" | sha512sum | awk '{print $1}' |  sed 's/.*/$ foo:&/' | sudo tee -a /etc/pwdfile`
 
 Say you want to use custom password for two users `foo` and `bar` with the password `password_foo` and `password_bar` respectively.Then your `/etc/pwdfile` should look like below
 
