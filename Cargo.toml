@@ -1,6 +1,6 @@
 [package]
 name = "pam_pwdfile_rs"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Supernovatux <thulashitharan.d@gmail.com>"]
 
 [dependencies]

@@ -6,3 +6,5 @@ pkg
 completions
 .vscode/settings.json
 package_tools
+src/LICENSE
+src/target/x86_64-unknown-linux-gnu/release/libpam_pwdfile_rs.so

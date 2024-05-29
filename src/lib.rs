@@ -26,6 +26,9 @@ fn get_string(pam_string: Result<Option<&CStr>, PamError>) -> Result<String, Pam
     }
 }
 impl PamServiceModule for PamPwdfile {
+    fn setcred(_: Pam, _: PamFlags, _: Vec<String>) -> PamError {
+        PamError::SUCCESS
+    }
     fn authenticate(pamh: Pam, _flags: PamFlags, args: Vec<String>) -> PamError {
         let mut sha512 = Sha512::new();
         let username: String = try_or_ret!(get_string(pamh.get_cached_user()));
