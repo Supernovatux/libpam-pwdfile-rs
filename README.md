@@ -12,7 +12,7 @@ This is a rust port of [libpam-pwdfile](https://git.tiwe.de/libpam-pwdfile.git).
 
 ```bash
 cd /tmp
-wget https://github.com/Supernovatux/libpam-pwdfile-rs/releases/download/v0.1.1/PKGBUILD
+wget https://github.com/Supernovatux/libpam-pwdfile-rs/releases/download/v0.2.0/PKGBUILD
 makepkg -si
 ```
 
