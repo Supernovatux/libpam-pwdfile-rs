@@ -2,7 +2,7 @@
   description = "libpam-pwdfile-rs - PAM module that auth against pwdfile";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
   };
 
@@ -14,15 +14,23 @@
         "aarch64-linux"
       ];
 
-      flake.nixosModules = rec {
-        default = libpam-pwdfile-rs;
-        libpam-pwdfile-rs = import ./module.nix;
-      };
+      # Make the flake root available to modules without relying on the
+      # unsound `self` argument.
+      _module.args.root = ./.;
+
+      imports = [
+        ./packages.nix
+        ./overlays.nix
+        ./nixosModules.nix
+      ];
 
       perSystem =
         { pkgs, ... }:
         {
-          packages.default = pkgs.callPackage ./package.nix { };
+          # flake-parts evaluates `perSystem` in a separate module scope, so
+          # the top-level `_module.args.root` does not reach it. Expose it here
+          # for the per-system flake modules (packages.nix, ...).
+          _module.args.root = ./.;
 
           devShells.default = pkgs.mkShell {
             nativeBuildInputs = [

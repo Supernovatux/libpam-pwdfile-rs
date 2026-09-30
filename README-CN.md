@@ -4,7 +4,7 @@
 [![NixOS](https://img.shields.io/badge/NixOS-Flake_Ready-5277C3?style=flat-square&logo=nixos)](https://nixos.org/)
 [![Arch Linux](https://img.shields.io/badge/Arch_Linux-PKGBUILD-1793D1?style=flat-square&logo=archlinux)](https://archlinux.org/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/v0.4.2-latest-blue?style=flat-square)](https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/tag/v0.4.2)
+[![Version](https://img.shields.io/badge/v0.5.0-latest-blue?style=flat-square)](https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/tag/v0.5.0)
 
 **[English](README.md)**
 
@@ -54,7 +54,7 @@ mkpasswd -m yescrypt
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     libpam-pwdfile-rs = {
-      url = "github:lialh4qwq/libpam-pwdfile-rs/v0.4.2";
+      url = "github:lialh4qwq/libpam-pwdfile-rs/v0.5.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -62,7 +62,8 @@ mkpasswd -m yescrypt
   outputs = { nixpkgs, libpam-pwdfile-rs, ... }: {
     nixosConfigurations.your-host = nixpkgs.lib.nixosSystem {
       modules = [
-        libpam-pwdfile-rs.nixosModules.libpam-pwdfile-rs
+        # `nixosModules.default` 是 `nixosModules.libpam-pwdfile-rs` 的别名
+        libpam-pwdfile-rs.nixosModules.default
         # ... 其他模块
       ];
     };
@@ -73,21 +74,39 @@ mkpasswd -m yescrypt
 然后配置：
 
 ```nix
-libpam-pwdfile-rs= {
+services.libpam-pwdfile-rs = {
+  enable = true;
   # 一个配置实例，名称任意
-  pin = {
-    # 密码文件路径
-    pwdfile = "/etc/pin";
-    # 哪些 PAM 服务用它认证
-    services = [ "polkit-1" "sudo" ];
-    # 用户和密码
-    users = {
-      # 用户名和 yescrypt 处理后的密码
-      yourname.secret = "$y$j9T$...";  # mkpasswd -m yescrypt
-    };
+  instances.pin = {
+    # 哪些 PAM 服务使用该实例认证
+    pamServices = [ "polkit-1" "sudo" ];
+    # 用户及其哈希后的密码
+    users.yourname.hashedPassword = "$y$j9T$...";  # mkpasswd -m yescrypt
   };
 };
 ```
+
+密码文件会在启动时自动生成于 `/run/libpam-pwdfile-rs/<instance>`，无需手动管理。
+若要从密钥管理器（如 [sops-nix](https://github.com/Mic92/sops-nix)）读取哈希，
+改用 `hashedPasswordFile`：
+
+```nix
+services.libpam-pwdfile-rs.instances.pin.users.yourname.hashedPasswordFile =
+  config.sops.secrets.pin-hash.path;
+```
+
+也可以使用 overlay，它把包暴露为 `pkgs.libpam-pwdfile-rs`（模块的 `package`
+选项默认使用它）：
+
+```nix
+nixpkgs.overlays = [ libpam-pwdfile-rs.overlays.default ];
+```
+
+> **从 < 0.5.0 升级？** 该模块现在需要通过 `enable = true` 显式启用，旧的
+> `libpam-pwdfile-rs.<name>` 选项已弃用但仍会被映射：`services` 变为
+> `instances.<name>.pamServices`，`users.<user>.secret` 变为
+> `users.<user>.hashedPassword`。会输出警告；在仍提供 `news` 模块的 NixOS
+> 版本上还会显示 news 条目。
 
 </details>
 
@@ -96,7 +115,7 @@ libpam-pwdfile-rs= {
 
 ```bash
 # 下载并从源码构建
-curl -LO https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/download/v0.4.2/PKGBUILD
+curl -LO https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/download/v0.5.0/PKGBUILD
 makepkg -si
 ```
 
@@ -107,7 +126,7 @@ makepkg -si
 
 ```bash
 # 下载 spec 文件并构建 RPM
-curl -LO https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/download/v0.4.2/pam_pwdfile_rs.spec
+curl -LO https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/download/v0.5.0/pam_pwdfile_rs.spec
 rpmbuild -ba pam_pwdfile_rs.spec
 sudo dnf install ~/rpmbuild/RPMS/x86_64/pam_pwdfile_rs-*.rpm
 ```

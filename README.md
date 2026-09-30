@@ -4,7 +4,7 @@
 [![NixOS](https://img.shields.io/badge/NixOS-Flake_Ready-5277C3?style=flat-square&logo=nixos)](https://nixos.org/)
 [![Arch Linux](https://img.shields.io/badge/Arch_Linux-PKGBUILD-1793D1?style=flat-square&logo=archlinux)](https://archlinux.org/)
 [![MIT License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/badge/v0.4.2-latest-blue?style=flat-square)](https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/tag/v0.4.2)
+[![Version](https://img.shields.io/badge/v0.5.0-latest-blue?style=flat-square)](https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/tag/v0.5.0)
 
 **[中文](README-CN.md)**
 
@@ -54,7 +54,7 @@ Add to your `flake.nix`:
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     libpam-pwdfile-rs = {
-      url = "github:lialh4qwq/libpam-pwdfile-rs/v0.4.2";
+      url = "github:lialh4qwq/libpam-pwdfile-rs/v0.5.0";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -62,7 +62,8 @@ Add to your `flake.nix`:
   outputs = { nixpkgs, libpam-pwdfile-rs, ... }: {
     nixosConfigurations.your-host = nixpkgs.lib.nixosSystem {
       modules = [
-        libpam-pwdfile-rs.nixosModules.libpam-pwdfile-rs
+        # `nixosModules.default` is an alias for `nixosModules.libpam-pwdfile-rs`
+        libpam-pwdfile-rs.nixosModules.default
         # ... your other modules
       ];
     };
@@ -73,21 +74,40 @@ Add to your `flake.nix`:
 Then configure:
 
 ```nix
-libpam-pwdfile-rs= {
-  # a pwd file instance, can be any name
-  pin = {
-    # pwd file location
-    pwdfile = "/etc/pin";
-    # pam service which use it for auth
-    services = [ "polkit-1" "sudo" ];
-    # users and their passwords
-    users = {
-      # username and passwords hashed by yescrypt
-      yourname.secret = "$y$j9T$...";  # mkpasswd -m yescrypt
-    };
+services.libpam-pwdfile-rs = {
+  enable = true;
+  # a pwdfile instance, can be any name
+  instances.pin = {
+    # PAM services that authenticate against this instance
+    pamServices = [ "polkit-1" "sudo" ];
+    # users and their hashed passwords
+    users.yourname.hashedPassword = "$y$j9T$...";  # mkpasswd -m yescrypt
   };
 };
 ```
+
+The pwdfile itself is generated at boot at `/run/libpam-pwdfile-rs/<instance>`,
+so you do not need to manage it yourself. To source the hash from a secret
+manager such as [sops-nix](https://github.com/Mic92/sops-nix), use
+`hashedPasswordFile` instead:
+
+```nix
+services.libpam-pwdfile-rs.instances.pin.users.yourname.hashedPasswordFile =
+  config.sops.secrets.pin-hash.path;
+```
+
+The overlay is available as well and exposes the package as
+`pkgs.libpam-pwdfile-rs` (the module's `package` option defaults to it):
+
+```nix
+nixpkgs.overlays = [ libpam-pwdfile-rs.overlays.default ];
+```
+
+> **Upgrading from < 0.5.0?** The module is now opt-in via `enable = true`, the
+> old `libpam-pwdfile-rs.<name>` options are deprecated but still mapped:
+> `services` became `instances.<name>.pamServices` and `users.<user>.secret`
+> became `users.<user>.hashedPassword`. A warning is emitted and, where the
+> NixOS release still ships the `news` module, a news entry is shown.
 
 </details>
 
@@ -96,7 +116,7 @@ libpam-pwdfile-rs= {
 
 ```bash
 # Download and build from source
-curl -LO https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/download/v0.4.2/PKGBUILD
+curl -LO https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/download/v0.5.0/PKGBUILD
 makepkg -si
 ```
 
@@ -107,7 +127,7 @@ makepkg -si
 
 ```bash
 # Download spec file and build RPM
-curl -LO https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/download/v0.4.2/pam_pwdfile_rs.spec
+curl -LO https://github.com/lialh4qwq/libpam-pwdfile-rs/releases/download/v0.5.0/pam_pwdfile_rs.spec
 rpmbuild -ba pam_pwdfile_rs.spec
 sudo dnf install ~/rpmbuild/RPMS/x86_64/pam_pwdfile_rs-*.rpm
 ```

@@ -9,11 +9,11 @@
 
 rustPlatform.buildRustPackage {
   pname = "libpam-pwdfile-rs";
-  version = "0.4.2";
+  version = "0.5.0";
 
   src = lib.cleanSource ./.;
 
-  cargoHash = "sha256-H2QyYWRUYos6WywElNXRfHvRwg9eqq2tlUsdLROFOE4=";
+  cargoHash = "sha256-JV2xEtTE7aEYwfN3NA2SKEpUSzLFzjmcrn+KAipVXLs=";
 
   nativeBuildInputs = [
     pkg-config
@@ -47,7 +47,7 @@ rustPlatform.buildRustPackage {
       Passwords should be hashed with yescrypt (mkpasswd -m yescrypt).
     '';
     homepage = "https://github.com/lialh4qwq/pam-pwdfile-rs";
-    changelog = "https://github.com/lialh4qwq/pam-pwdfile-rs/releases/tag/v0.4.2";
+    changelog = "https://github.com/lialh4qwq/pam-pwdfile-rs/releases/tag/v0.5.0";
     license = lib.licenses.mit;
     platforms = lib.platforms.linux;
   };

@@ -1,5 +1,5 @@
 Name:           pam_pwdfile_rs
-Version:        0.4.2
+Version:        0.5.0
 Release:        1%{?dist}
 Summary:        PAM module that authenticates against pwdfile with yescrypt
 
@@ -39,6 +39,11 @@ install -Dm4755 target/release/pam_pwdfile_rs_helper \
 %attr(4755,root,root) %{_bindir}/pam_pwdfile_rs_helper
 
 %changelog
+* Wed Sep 30 2026 LiAlH4qwq <lialh4qwq@outlook.com> - 0.5.0-1
+- Move NixOS options to `services.libpam-pwdfile-rs`
+- Add hashedPasswordFile support (sops-nix) via a boot-time assembly service
+- Keep the old options as deprecated with warnings and a news entry
+
 * Sun Sep 13 2026 LiAlH4qwq <lialh4qwq@outlook.com> - 0.4.2-1
 - Migrate the Nix flake to flake-parts
 - Verify cross-compilation to 32-bit ARM (armv7l)
