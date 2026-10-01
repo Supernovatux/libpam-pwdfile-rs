@@ -1,3 +1,6 @@
+> [!WARNING]
+> **This project is no longer maintained.** I no longer use this project. You may use **[LiAlH4qwq/libpam-pwdfile-rs](https://github.com/LiAlH4qwq/libpam-pwdfile-rs)** instead. I haven't reviewed or audited the fork.
+
 # libpam-pwdfile-rs
 
 ## Description
